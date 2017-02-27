@@ -1,6 +1,6 @@
 # sodium
 
-TODO: Write a description here
+A fast library for graph/network manipulation inspired by [networkx](https://github.com/networkx/networkx).
 
 ## Installation
 
@@ -9,7 +9,7 @@ Add this to your application's `shard.yml`:
 ```yaml
 dependencies:
   sodium:
-    github: [your-github-name]/sodium
+    github: EddyShure/sodium
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ dependencies:
 require "sodium"
 ```
 
-TODO: Write usage instructions here
+TODO: Write documentation
 
 ## Development
 
@@ -26,7 +26,7 @@ TODO: Write development instructions here
 
 ## Contributing
 
-1. Fork it ( https://github.com/[your-github-name]/sodium/fork )
+1. Fork it ( https://github.com/EddyShure/sodium/fork )
 2. Create your feature branch (git checkout -b my-new-feature)
 3. Commit your changes (git commit -am 'Add some feature')
 4. Push to the branch (git push origin my-new-feature)
@@ -34,4 +34,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [[your-github-name]](https://github.com/[your-github-name]) Eddy Shure - creator, maintainer
+- [EddyShure](https://github.com/EddyShure) Eddy Shure - creator, maintainer
