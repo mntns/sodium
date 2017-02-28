@@ -14,9 +14,9 @@ describe Sodium do
   end
 
   it "adds some more nodes" do
-    g.add_node("homer")
-    g.add_node("marge")
-    g.add_node("bart")
+    g.add_node("homer", label: "label")
+    g.add_node("marge", shape: "box")
+    g.add_node("bart", weight: "1.0")
   end
 
   it "adds nodes from array" do
@@ -49,4 +49,9 @@ describe Sodium do
   it "checks neighbours for another node" do
     g.neighbours("homer").should eq(["marge", "flanders"])
   end
+  
+  dot = Sodium::Dot.new()
+  gen = Sodium::Generator.new()
+  dot.write_dot(gen.simple_random(100, 50), "test.dot")
+  dot.write_dot(g, "test2.dot")
 end
