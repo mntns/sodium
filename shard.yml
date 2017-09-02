@@ -4,6 +4,6 @@ version: 0.1.0
 authors:
   - Eddy Shure <github@monoton.space>
 
-crystal: 0.20.5
+crystal: 0.21.0
 
 license: MIT
