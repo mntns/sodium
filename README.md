@@ -1,8 +1,8 @@
-# sodium
+![sodium logo](https://raw.githubusercontent.com/EddyShure/sodium/develop/logo.png)
+
+>  A fast library for graph/network manipulation inspired by [networkx](https://github.com/networkx/networkx).
 
 [![Build Status](https://travis-ci.org/EddyShure/sodium.svg?branch=master)](https://travis-ci.org/EddyShure/sodium)
-
-A fast library for graph/network manipulation inspired by [networkx](https://github.com/networkx/networkx).
 
 ## Installation
 

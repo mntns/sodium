@@ -67,6 +67,18 @@ module Sodium
     def remove_edges_from()
     end
 
+    # Adds star
+    def add_star()
+    end
+
+    # Adds path
+    def add_path()
+    end
+
+    # Adds cycle
+    def add_cycle()
+    end
+
     # Clears graph
     def clear()
     end
@@ -77,7 +89,7 @@ module Sodium
       @node
     end
 
-    # TODO: iterator
+    # TODO: node iterator
 
     # Returns all edges in graph
     def edges()
@@ -93,6 +105,8 @@ module Sodium
       end
       arr
     end
+
+    # TODO: edge iterator
 
     # Returns edge data
     def get_edge_data()
