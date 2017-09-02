@@ -9,14 +9,24 @@ describe "Sodium::Graph" do
     g.add_node(3)
   end
 
-  it "adds some more nodes" do
-    g.add_node(5, label: "label")
-    g.add_node(4, shape: "box")
-    g.add_node(3, weight: "1.0")
+  it "adds some more nodes with attributes" do
+    g.add_node(4, label: "label")
+    g.add_node(5, shape: "box")
+    g.add_node(6, weight: "1.0")
   end
 
   it "adds nodes from array" do
-    g.add_nodes_from([4, 5, 6])
+    g.add_nodes_from([7, 8, 9, 10, 11, 12])
+    g.add_nodes_from([13, 14, 15])
+  end
+
+  it "removes some nodes" do
+    g.remove_node(15)
+    g.remove_node(14)
+  end
+
+  it "removes nodes from array" do
+    g.remove_nodes_from((10..13).to_a)
   end
 
   it "adds a few edges" do
@@ -32,6 +42,7 @@ describe "Sodium::Graph" do
   end
 
   it "checks number of edges" do
+    g.number_of_edges().should eq(3)
   end
 
   it "checks neighbours for a node" do
