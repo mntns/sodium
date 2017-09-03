@@ -1,5 +1,5 @@
 require "./sodium/*"
 
 module Sodium
-include Sodium::Function
+ #include Sodium::Function
 end

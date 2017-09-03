@@ -74,10 +74,7 @@ module Sodium
   
     # Adds edge to graph
     def add_edge(u : T, v : T, **attr)
-      # Add nodes
-      add_node(u)
-      add_node(v)
-      
+      #e.each { |node| add_node(node) }
       if !attr.empty?
         @adjacency[u][v] = attr_to_h(attr)
         @adjacency[v][u] = attr_to_h(attr)
@@ -112,21 +109,15 @@ module Sodium
     end
 
     # Adds star
-    def add_star(nodes : Array(T))
-      edges = nodes[1..-1].map {|node| {nodes[0], node}}
-      add_edges_from(edges)
+    def add_star(internal : T, leaves : Array(T))
     end
 
     # Adds path
     def add_path(nodes : Array(T))
-      edges = nodes.each_cons(2).map {|cons| Tuple(T, T).from(cons)}
-      add_edges_from(edges.to_a)
     end
 
     # Adds cycle
-    def add_cycle(nodes : Array(T))
-      add_path(nodes)
-      add_edge(nodes[-1], nodes[0])
+    def add_cycle(node : Array(T))
     end
 
     # Clears graph
@@ -145,7 +136,7 @@ module Sodium
     # TODO: node iterator
 
     # Returns all edges in graph
-    def edges
+    def edges()
       seen = {} of Int32 | String => Int32
       arr = [] of Tuple(Int32 | String, Int32 | String)
       @adjacency.each do |k, v|
@@ -162,8 +153,7 @@ module Sodium
     # TODO: edge iterator
 
     # Returns edge data
-    def get_edge_data(u : T, v : T)
-       @adjacency[u][v]
+    def get_edge_data()
     end
 
     # Returns neighbours of node
