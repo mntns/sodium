@@ -15,6 +15,10 @@ describe "Sodium::Graph" do
     g.add_node(6, weight: "1.0")
   end
 
+  it "tests iterator" do
+    g.each.map {|n| n}.to_a.should eq(g.nodes().keys.to_a)
+  end
+
   it "adds nodes from array" do
     g.add_nodes_from([7, 8, 9, 10, 11, 12])
     g.add_nodes_from([13, 14, 15])
@@ -30,7 +34,7 @@ describe "Sodium::Graph" do
   end
 
   it "adds a few edges" do
-    g.add_edge({1,2})
+    g.add_edge(1, 2)
   end
 
   it "adds edges from array" do

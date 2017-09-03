@@ -1,16 +1,42 @@
 module Sodium
   class Graph(T)
+    include Iterator(T)
     getter :adjacency
 
     # Initializes graph
     def initialize()
+      @name = ""
+      # @graph
       @adjacency = {} of T => Hash(T, Int32)
       @node = {} of T => Hash(Symbol, String)
+
+      @iter_idx = 0
     end
 
+    # Converts NamedTuple to Hash
     def attr_to_h(attr)
       # TODO: Fix .to_h in Crystal for NamedTuple
       attr.keys.map {|k| {k => attr[k]} of Symbol => String}.to_a.reduce {|acc, i| acc.merge(i) }
+    end
+
+    # Iterator: Gets next item in sequence
+    def next
+      if @iter_idx < @node.keys.size()
+        if (@node.keys[@iter_idx]?)
+          @node.keys[@iter_idx]
+        else
+          stop
+        end
+        @iter_idx += 1
+      else
+        stop
+      end
+    end
+
+    # Iterator: Rewind
+    def rewind
+      @iter_idx = 0
+      self
     end
 
     # Adds node to graph
@@ -47,49 +73,58 @@ module Sodium
     end
   
     # Adds edge to graph
-    def add_edge(e : Tuple(T, T), **attr)
-      e.each { |node| add_node(node) }
+    def add_edge(u : T, v : T, **attr)
+      #e.each { |node| add_node(node) }
       if !attr.empty?
-        @adjacency[e[0]][e[1]] = attr_to_h(attr)
-        @adjacency[e[1]][e[0]] = attr_to_h(attr)
+        @adjacency[u][v] = attr_to_h(attr)
+        @adjacency[v][u] = attr_to_h(attr)
       else
-        @adjacency[e[0]][e[1]] = 0
-        @adjacency[e[1]][e[0]] = 0
+        @adjacency[u][v] = 0
+        @adjacency[v][u] = 0
       end
     end
 
     # Adds edges from list to graph
-    def add_edges_from(list)
-      list.each { |edge| add_edge(edge) }
+    def add_edges_from(list : Array(Tuple(T, T)))
+      list.each { |edge| add_edge(edge[0], edge[1]) }
     end
 
     # TODO: doc
     def add_weighted_edges_from()
+
       # TODO
     end
 
     # Removes edge from graph
-    def remove_edge()
+    def remove_edge(u : T, v : T)
+      @adjacency[u].delete(v)
+      if u != v
+        @adjacency[v].delete(u)
+      end
     end
 
     # Removes edges given in list from graph
-    def remove_edges_from()
+    def remove_edges_from(list : Array(Tuple(T, T)))
+      list.each { |edge| remove_edge(edge[0], edge[1]) }
     end
 
     # Adds star
-    def add_star()
+    def add_star(internal : T, leaves : Array(T))
     end
 
     # Adds path
-    def add_path()
+    def add_path(nodes : Array(T))
     end
 
     # Adds cycle
-    def add_cycle()
+    def add_cycle(node : Array(T))
     end
 
     # Clears graph
     def clear()
+      @name = ""
+      @adjacency.clear
+      @node.clear
     end
 
 
