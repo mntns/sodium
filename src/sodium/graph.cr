@@ -1,13 +1,10 @@
 module Sodium
   class Graph(T)
     include Iterator(T)
-    getter :adjacency
 
     # Initializes graph
-    def initialize()
-      @name = ""
-      # @graph
-      @adjacency = {} of T => Hash(T, Int32)
+    def initialize
+      @adj = {} of T => Hash(T, Int32)
       @node = {} of T => Hash(Symbol, String)
 
       @iter_idx = 0
@@ -19,30 +16,14 @@ module Sodium
       attr.keys.map {|k| {k => attr[k]} of Symbol => String}.to_a.reduce {|acc, i| acc.merge(i) }
     end
 
-    # Iterator: Gets next item in sequence
-    def next
-      if @iter_idx < @node.keys.size()
-        if (@node.keys[@iter_idx]?)
-          @node.keys[@iter_idx]
-        else
-          stop
-        end
-        @iter_idx += 1
-      else
-        stop
-      end
-    end
-
-    # Iterator: Rewind
-    def rewind
-      @iter_idx = 0
-      self
-    end
+    # -----------------------------------------
+    # Adding and removing nodes and edges
+    # -----------------------------------------
 
     # Adds node to graph
     def add_node(n : T, **attr)
-      if !@adjacency.has_key?(n)
-        @adjacency[n] = {} of T => Int32
+      if !@adj.has_key?(n)
+        @adj[n] = {} of T => Int32
         if !attr.empty?
           @node[n] = attr_to_h(attr)
         else
@@ -63,8 +44,8 @@ module Sodium
 
     # Removes node from graph
     def remove_node(n : T)
-      @adjacency[n].keys.each {|u| @adjacency[u].delete(n)}
-      @adjacency.delete(n)
+      @adj[n].keys.each {|u| @adj[u].delete(n)}
+      @adj.delete(n)
     end
 
     # Removes nodes given in enumerable from graph
@@ -79,11 +60,11 @@ module Sodium
       add_node(v)
       
       if !attr.empty?
-        @adjacency[u][v] = attr_to_h(attr)
-        @adjacency[v][u] = attr_to_h(attr)
+        @adj[u][v] = attr_to_h(attr)
+        @adj[v][u] = attr_to_h(attr)
       else
-        @adjacency[u][v] = 0
-        @adjacency[v][u] = 0
+        @adj[u][v] = 0
+        @adj[v][u] = 0
       end
     end
 
@@ -100,9 +81,9 @@ module Sodium
 
     # Removes edge from graph
     def remove_edge(u : T, v : T)
-      @adjacency[u].delete(v)
+      @adj[u].delete(v)
       if u != v
-        @adjacency[v].delete(u)
+        @adj[v].delete(u)
       end
     end
 
@@ -132,11 +113,34 @@ module Sodium
     # Clears graph
     def clear()
       @name = ""
-      @adjacency.clear
+      @adj.clear
       @node.clear
     end
 
+    # Iterator: Gets next item in sequence
+    def next
+      if @iter_idx < @node.keys.size()
+        if (@node.keys[@iter_idx]?)
+          @iter_idx += 1
+          @node.keys[@iter_idx-1]
+        else
+          stop
+        end
+      else
+        stop
+      end
+    end
 
+    # Iterator: Rewind
+    def rewind
+      @iter_idx = 0
+      self
+    end
+    
+    # -----------------------------------------
+    # Iterating over nodes and edges
+    # -----------------------------------------
+    
     # Returns all nodes in graph
     def nodes
       @node
@@ -148,7 +152,7 @@ module Sodium
     def edges
       seen = {} of Int32 | String => Int32
       arr = [] of Tuple(Int32 | String, Int32 | String)
-      @adjacency.each do |k, v|
+      @adj.each do |k, v|
         v.each do |subk, subv|
           if !seen.has_key?(subk)
             arr << {k, subk}
@@ -163,16 +167,16 @@ module Sodium
 
     # Returns edge data
     def get_edge_data(u : T, v : T)
-       @adjacency[u][v]
+       @adj[u][v]
     end
 
     # Returns neighbours of node
     def neighbours(node)
-      @adjacency.fetch(node, {} of Int32 => Int32).keys()
+      @adj.fetch(node, {} of Int32 => Int32).keys()
     end
 
     # TODO: doc
-    def adjacency()
+    def adj()
     end
 
 
@@ -181,18 +185,18 @@ module Sodium
 
 
     def add_edge_weight(e : Tuple(T, T), weight : Int32) forall T
-      @adjacency[e[0]][e[1]] = weight
-      @adjacency[e[1]][e[0]] = weight
+      @adj[e[0]][e[1]] = weight
+      @adj[e[1]][e[0]] = weight
     end
 
     # Returns number of nodes inside graph
     def number_of_nodes()
-      @adjacency.keys().size()
+      @adj.keys().size()
     end
 
     # Returns number of edges inside graph
     def number_of_edges()
-      @adjacency.keys.map { |key| @adjacency[key].keys().size() }.sum() / 2
+      @adj.keys.map { |key| @adj[key].keys().size() }.sum() / 2
     end
   end
 end
