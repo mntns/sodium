@@ -2,7 +2,6 @@ require "spec"
 
 describe Sodium::Graph do
   g = Sodium::Graph(Int32).new()
-  node_count = 0
 
   # -----------------------------------------
   # Adding and removing nodes and edges
@@ -13,16 +12,20 @@ describe Sodium::Graph do
       g.add_node(1)
       g.add_node(2)
       g.add_node(3)
-      node_count += 3
       
       g.nodes.keys.should eq((1..3).to_a)
+    end
+
+    it "update node" do
+      g.add_node(3, label: 1337)
+
+      g.nodes[3][:label].should eq(1337)
     end
 
     it "adds some more nodes with attributes" do
       g.add_node(4, label: 123)
       g.add_node(5, shape: 232)
       g.add_node(6, weight: 10)
-      node_count += 3
       
       g.nodes.keys.should eq((1..6).to_a)
     end
@@ -32,44 +35,65 @@ describe Sodium::Graph do
     it "adds nodes from array" do
       g.add_nodes_from([7, 8, 9, 10, 11, 12])
       g.add_nodes_from([13, 14, 15])
-      node_count += 9
-
+      
       g.nodes.keys.should eq((1..15).to_a)
     end
   end
 
   describe "#remove_nodes" do
     it "removes some nodes" do
-      # node_count: -2
       g.remove_node(15)
       g.remove_node(14)
+
+      g.nodes.keys.should eq((1..13).to_a)
     end
   end
 
   describe "#remove_nodes_from" do
     it "removes nodes from array" do
       g.remove_nodes_from((10..13).to_a)
+      
+      g.nodes.keys.should eq((1..9).to_a)
     end
   end
 
   describe "#add_edge" do
     it "adds a few edges" do
       g.add_edge(1, 2)
+      g.add_edge(2, 3)
+
+      p g.edges.should eq([{1, 2}, {2, 3}])
+    end
+
+    it "adds an edge with weight" do
+      g.add_edge(2, 3, weight: 1232)
+
+      g.get_edge_data(2, 3).should eq({:weight => 1232})
+    end
+
+    it "adds an edge with new nodes" do
+      g.add_edge(33, 34)
+
+      g.nodes[33].should eq({} of Symbol => Int32)
     end
   end
 
   describe "#add_edges_from" do
     it "adds edges from array" do
-      g.add_edges_from([{2,3},{1,3}])
+      g.add_edges_from([{44, 45}, {46, 46}])
     end
   end
 
   describe "#add_weighted_edges_from" do
-    # TODO
+    it "adds edges with weight" do
+      g.add_weighted_edges_from([{46, 47, 10}, {44, 43, 132}])
+    end
   end
 
   describe "#remove_edge" do
-    # TODO
+    it "removes edge" do
+      g.remove_edge(44, 45)
+    end
   end
 
   describe "#remove_edges_from" do

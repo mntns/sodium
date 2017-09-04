@@ -2,22 +2,23 @@ require "../graph"
 
 module Sodium
   module Generator
-    class Classic
-      def initialize
-        @random = Random.new
+     module Classic(T)
+
+      # Returns complete graph
+      def complete_graph(n) 
+        g = empty_graph(n)
+        edges = (0..n).to_a.combinations(2).map{|e| {e[0], e[1]}}
+        g.add_edges_from(edges)
+        g
       end
 
-      def simple_random(c_nodes, c_edges)
-        g = Sodium::Graph.new()
-
-        g.add_node(0)
-
-        (1..c_nodes).each do |i|
-          g.add_node(i)
-          g.add_edge({i, @random.rand(g.number_of_nodes() - 1)})
-        end
-        return g
+      # Returns an empty graph
+      def empty_graph(n = 0)
+        g = Sodium::Graph(T).new()
+        g.add_nodes_from((0..n).to_a)
+        g
       end
+
     end
   end
 end

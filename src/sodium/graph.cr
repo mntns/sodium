@@ -13,22 +13,20 @@ module Sodium
     # Converts NamedTuple to Hash
     def attr_to_h(attr)
       # TODO: Fix .to_h in Crystal for NamedTuple
-      attr.keys.map {|k| {k => attr[k]} of Symbol => Int32}.to_a.reduce {|acc, i| acc.merge(i) }
+      if !attr.empty?
+        attr.keys.map {|k| {k => attr[k]} of Symbol => Int32}.to_a.reduce {|acc, i| acc.merge(i) }
+      else
+        {} of Symbol => Int32
+      end
     end
 
     # Adds node to graph
     def add_node(n : T, **attr)
       if !@adj.has_key?(n)
         @adj[n] = {} of T => Hash(Symbol, Int32)
-        if !attr.empty?
-          @node[n] = attr_to_h(attr)
-        else
-          @node[n] = {} of Symbol => Int32
-        end
+        @node[n] = attr_to_h(attr)
       else
-        if !attr.empty?
-          @node[n].merge!(attr_to_h(attr))
-        end
+        @node[n].merge!(attr_to_h(attr))
       end
     end
 
@@ -41,6 +39,7 @@ module Sodium
     def remove_node(n : T)
       @adj[n].keys.each {|u| @adj[u].delete(n)}
       @adj.delete(n)
+      @node.delete(n)
     end
 
     # Removes nodes given in enumerable from graph
