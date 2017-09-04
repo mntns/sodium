@@ -2,7 +2,7 @@ require "../graph"
 
 module Sodium
   module Generator
-     module Classic(T)
+     class Classic(T)
 
       # Returns complete graph
       def complete_graph(n) 
