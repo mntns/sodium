@@ -19,9 +19,9 @@ describe Sodium::Graph do
     end
 
     it "adds some more nodes with attributes" do
-      g.add_node(4, label: "label")
-      g.add_node(5, shape: "box")
-      g.add_node(6, weight: "1.0")
+      g.add_node(4, label: 123)
+      g.add_node(5, shape: 232)
+      g.add_node(6, weight: 10)
       node_count += 3
       
       g.nodes.keys.should eq((1..6).to_a)
@@ -130,6 +130,9 @@ describe Sodium::Graph do
   end
 
   describe "#adjacency_list" do
+    it "gets adjacency list" do
+      g.adjacency_list()
+    end
   end
 
   describe "#adjacency_iter" do

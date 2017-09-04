@@ -4,8 +4,8 @@ module Sodium
 
     # Initializes graph
     def initialize
-      @adj = {} of T => Hash(T, Int32)
-      @node = {} of T => Hash(Symbol, String)
+      @adj = {} of T => Hash(T, Hash(Symbol, Int32))
+      @node = {} of T => Hash(Symbol, Int32)
 
       @iter_idx = 0
     end
@@ -13,26 +13,21 @@ module Sodium
     # Converts NamedTuple to Hash
     def attr_to_h(attr)
       # TODO: Fix .to_h in Crystal for NamedTuple
-      attr.keys.map {|k| {k => attr[k]} of Symbol => String}.to_a.reduce {|acc, i| acc.merge(i) }
+      attr.keys.map {|k| {k => attr[k]} of Symbol => Int32}.to_a.reduce {|acc, i| acc.merge(i) }
     end
-
-    # -----------------------------------------
-    # Adding and removing nodes and edges
-    # -----------------------------------------
 
     # Adds node to graph
     def add_node(n : T, **attr)
       if !@adj.has_key?(n)
-        @adj[n] = {} of T => Int32
+        @adj[n] = {} of T => Hash(Symbol, Int32)
         if !attr.empty?
           @node[n] = attr_to_h(attr)
         else
-          @node[n] = {} of Symbol => String
+          @node[n] = {} of Symbol => Int32
         end
       else
         if !attr.empty?
-          hacky = attr.keys.map {|k| {k => attr[k]} of Symbol => String}.to_a.reduce {|acc, i| acc.merge(i) }
-          @node[n].merge!(hacky)
+          @node[n].merge!(attr_to_h(attr))
         end
       end
     end
@@ -63,20 +58,19 @@ module Sodium
         @adj[u][v] = attr_to_h(attr)
         @adj[v][u] = attr_to_h(attr)
       else
-        @adj[u][v] = 0
-        @adj[v][u] = 0
+        @adj[u][v] = {} of Symbol => Int32
+        @adj[v][u] = {} of Symbol => Int32
       end
     end
 
     # Adds edges from list to graph
     def add_edges_from(list : Array(Tuple(T, T)))
-      list.each { |edge| add_edge(edge[0], edge[1]) }
+      list.each { |e| add_edge(e[0], e[1]) }
     end
 
-    # TODO: doc
-    def add_weighted_edges_from()
-
-      # TODO
+    # Adds weighted edges from list
+    def add_weighted_edges_from(list : Array(Tuple(T, T, Int32)))
+      list.each { |e| add_edge(e[0], e[1], weight: e[2]) }
     end
 
     # Removes edge from graph
@@ -94,13 +88,13 @@ module Sodium
 
     # Adds star
     def add_star(nodes : Array(T))
-      edges = nodes[1..-1].map {|node| {nodes[0], node}}
+      edges = nodes[1..-1].map {|n| {nodes[0], n}}
       add_edges_from(edges)
     end
 
     # Adds path
     def add_path(nodes : Array(T))
-      edges = nodes.each_cons(2).map {|cons| Tuple(T, T).from(cons)}
+      edges = nodes.each_cons(2).map {|c| Tuple(T, T).from(c)}
       add_edges_from(edges.to_a)
     end
 
@@ -112,13 +106,18 @@ module Sodium
 
     # Clears graph
     def clear()
-      @name = ""
       @adj.clear
       @node.clear
     end
 
-    # Iterator: Gets next item in sequence
+    # Returns all nodes in graph
+    def nodes
+      @node
+    end
+
+    # `Iterator`: Get next node
     def next
+      # TODO: node and edge iterator
       if @iter_idx < @node.keys.size()
         if (@node.keys[@iter_idx]?)
           @iter_idx += 1
@@ -131,23 +130,12 @@ module Sodium
       end
     end
 
-    # Iterator: Rewind
+    # `Iterator`: Rewind
     def rewind
       @iter_idx = 0
       self
     end
     
-    # -----------------------------------------
-    # Iterating over nodes and edges
-    # -----------------------------------------
-    
-    # Returns all nodes in graph
-    def nodes
-      @node
-    end
-
-    # TODO: node iterator
-
     # Returns all edges in graph
     def edges
       seen = {} of Int32 | String => Int32
@@ -163,8 +151,6 @@ module Sodium
       arr
     end
 
-    # TODO: edge iterator
-
     # Returns edge data
     def get_edge_data(u : T, v : T)
        @adj[u][v]
@@ -172,17 +158,14 @@ module Sodium
 
     # Returns neighbours of node
     def neighbours(node)
+      # TODO: Int32?
       @adj.fetch(node, {} of Int32 => Int32).keys()
     end
 
-    # TODO: doc
-    def adj()
+    # Returns an adjacency list in order of nodes()
+    def adjacency_list()
+      @adj.map {|k, v| v.keys()}
     end
-
-
-
-
-
 
     def add_edge_weight(e : Tuple(T, T), weight : Int32) forall T
       @adj[e[0]][e[1]] = weight
