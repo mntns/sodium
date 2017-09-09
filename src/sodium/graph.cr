@@ -112,6 +112,11 @@ module Sodium
 
     # Return all nodes in graph
     def nodes
+      @node.keys()
+    end
+
+    # Return all nodes in graph with data
+    def nodes_with_data
       @node
     end
 
@@ -158,8 +163,12 @@ module Sodium
 
     # Return neighbours of node
     def neighbours(node)
-      # TODO: Int32?
-      @adj.fetch(node, {} of Int32 => Int32).keys()
+      @adj.fetch(node, {} of Symbol => Int32).keys()
+    end
+
+    # Get node from graph
+    def [](node : T)
+      @node[node]
     end
 
     # Return adjacency list in order of #nodes()
@@ -169,17 +178,21 @@ module Sodium
 
     # Check if graph contains node
     def has_node?(node : T)
-      !(@node[node]?.is_nil?)
+      @node.keys.includes?(node)
     end
 
-    # Check if graph contains node
+    # Check if graph contains node and possibly returns object
     def []?(node : T)
-      has_node?(node)
+      @node[node]?
     end
 
     # Check if graph contains edge
     def has_edge?(u : T, v : T)
-      !(@node[u][v]?.is_nil?)
+      if @adj.keys.includes?(u)
+        @adj[u].keys.includes?(v)
+      else
+        false
+      end
     end
 
     # Return order of graph
@@ -189,32 +202,42 @@ module Sodium
 
     # Return number of nodes in graph
     def number_of_nodes
-      order()
+      @node.size()
     end
 
     # Return degree of node
     def degree(node : T)
+      @adj[node].keys.size()
     end
 
     # Return number of edges
     def size
-      @adj.keys.map { |key| @adj[key].keys().size() }.sum() / 2
+      @adj.keys.map {|k| @adj[k].keys.size() }.sum() / 2
     end
 
     # Return number of edges between nodes
     def number_of_edges(list : Array(Tuple(T, T)))
+      list.sum {|e| has_edge?(e[0], e[1]) ? 1 : 0 }
     end
 
     # Return nodes with self loop
     def nodes_with_selfloops
+      @adj.keys.map {|k| @adj[k][k]? ? k : nil}.compact
     end
 
     # Return edges with self loops
     def selfloop_edges
+      @adj.keys.map {|k| @adj[k][k]? ? {k, k} : nil }.compact
+    end
+
+    # Return self-looping edges with data
+    def selfloop_edges_with_data
+      @adj.keys.map {|k| @adj[k][k]? ? {k, k, @adj[k][k]} : nil }.compact
     end
 
     # Return number of edges with self loops
     def number_of_selfloops
+      selfloop_edges.size()
     end
     
     # Return shallow copy of graph
