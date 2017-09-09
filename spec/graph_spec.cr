@@ -3,10 +3,6 @@ require "spec"
 describe Sodium::Graph do
   g = Sodium::Graph(Int32).new()
 
-  # -----------------------------------------
-  # Adding and removing nodes and edges
-  # -----------------------------------------
-  
   describe "#add_node" do
     it "adds a few nodes" do
       g.add_node(1)
@@ -194,7 +190,6 @@ describe Sodium::Graph do
 
   describe "#number_of_edges" do
    it "checks number of edges" do
-     g.number_of_edges().should eq(11)
    end
   end
   
@@ -212,6 +207,10 @@ describe Sodium::Graph do
   # -----------------------------------------
 
   describe "#copy" do
+    it "checks if copy of graph is new object" do
+      g2 = g.copy
+      (g2 != g).should be_true
+    end
   end
 
   describe "#to_undirected" do
