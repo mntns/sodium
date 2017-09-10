@@ -144,7 +144,7 @@ module Sodium
     # Return all edges in graph
     def edges
       seen = {} of Int32 | String => Int32
-      arr = [] of Tuple(Int32 | String, Int32 | String)
+      arr = [] of Tuple(T, T)
       @adj.each do |k, v|
         v.each do |subk, subv|
           if !seen.has_key?(subk)
@@ -158,7 +158,12 @@ module Sodium
 
     # Return associated data of specified edge
     def get_edge_data(u : T, v : T)
-       @adj[u][v]
+      first = @adj[u]?
+      if first
+        first.fetch(v, {} of Symbol => Int32)
+      else
+        {} of Symbol => Int32
+      end
     end
 
     # Return neighbours of node

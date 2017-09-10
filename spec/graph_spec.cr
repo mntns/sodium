@@ -88,11 +88,18 @@ describe Sodium::Graph do
 
   describe "#remove_edge" do
     it "removes edge" do
+      edges_before = g.edges()
       g.remove_edge(44, 45)
+      g.edges().should eq(edges_before - [{44, 45}])
     end
   end
 
   describe "#remove_edges_from" do
+    it "remove edges from array" do
+      edges_before = g.edges()
+      g.remove_edges_from([{46, 47}, {44, 43}])
+      g.edges().should eq(edges_before - [{46, 47}, {44, 43}])
+    end
   end
 
   describe "#add_star" do
@@ -105,15 +112,17 @@ describe Sodium::Graph do
   describe "#add_path" do
     it "creates path" do
       g.add_path([28, 29, 30, 31])
-    end
-    it "checks edges" do
-      (28..31).each_cons(2) # .all?  
+      (28..31).each_cons(2).map {|e| g.has_edge?(e[0], e[1]) }.all?.should be_true
     end
   end
 
   describe "#add_cycle" do
     it "creates cycle" do
       g.add_cycle([31, 32, 33, 34])
+      (31..34).each_cons(2).map {|e| g.has_edge?(e[0], e[1]) }.all?.should be_true
+    end
+    it "checks closing edge" do
+      g.has_edge?(31, 34).should be_true
     end
   end
 
@@ -128,31 +137,52 @@ describe Sodium::Graph do
   end
 
   describe "#_iter" do
-    it "tests iterator" do
+    it "collects and compares nodes from iterator" do
       g.each.map {|n| n}.to_a.should eq(g.nodes.to_a)
     end
   end
 
   describe "#edges" do
+    it "checks edges" do
+      g.edges.should eq([{1, 2}, {2, 3}, {33, 34}, 
+                         {33, 32}, {34, 31}, {46, 46}, 
+                         {22, 23}, {22, 24}, {22, 25}, 
+                         {22, 26}, {22, 27}, {28, 29}, 
+                         {29, 30}, {30, 31}, {31, 32}])
+    end
   end
 
   describe "#get_edge_data" do
     it "check edge data for existent edge" do
+      g.get_edge_data(2, 3).should eq({:weight => 1232})
+    end
+    it "check edge data for non-existent edge" do
+      g.get_edge_data(99, 31).should eq({} of Symbol => Int32)
     end
   end
 
   describe "#neighbours" do
+    it "checks neighbours of existent node" do
+      g.neighbours(1).should eq([2])
+    end
+    it "check neighbours of non-existent node" do
+      g.neighbours(99).should eq([] of Int32)
+    end
   end
 
   describe "#[]" do
     it "gets node from graph" do
-      g[1]
+      g[3].should eq({:label => 1337})
+    end
+    it "gets non-existing node from graph" do
+      # TODO
     end
   end
 
   describe "#adjacency_list" do
     it "gets adjacency list" do
-      g.adjacency_list()
+      #p g.adjacency_list()
+      # TODO
     end
   end
  
@@ -207,7 +237,7 @@ describe Sodium::Graph do
 
   describe "#size" do
     it "checks number of edges" do
-      g.size.should eq(16)
+      g.size.should eq(14)
     end
   end
 
@@ -244,11 +274,14 @@ describe Sodium::Graph do
   end
 
   describe "#to_undirected" do
+    # TODO
   end
 
   describe "#to_directed" do
+    # TODO
   end
 
   describe "#subgraph" do
+    # TODO
   end
 end
