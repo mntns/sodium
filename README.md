@@ -20,16 +20,41 @@ dependencies:
 require "sodium"
 ```
 
-TODO: Write documentation
+You can create a graph with nodes of any type. For example, if you want to create a
+graph with nodes of the type `Int32`:
 
-## Development
+```crystal
+graph = Sodium::Graph(Int32).new()
+```
 
-TODO: Write development instructions here
+Manipulating the graph is straightforward:
+
+```crystal
+# Add individual nodes
+graph.add_node(1)
+graph.add_node(2)
+graph.add_node(3, {weight: 232})
+
+# Add multiple nodes
+graph.add_nodes_from([31, 32, 33])
+
+# Add an edge
+graph.add_edge(1, 2)
+graph.add_edge(66, 88)
+
+# Add multiple edge
+graph.add_edges_from([{2, 3}, {4, 5}, {6, 7}])
+
+# Remove a node
+graph.remove_node(1)
+```
+
+For more information, please check out the [documentation](https://monoton.space/sodium).
 
 ## Roadmap
 
 ### Graph types
-- [ ] `Graph`
+- [x] `Graph`
 - [ ] `DiGraph`
 - [ ] `MultiGraph`
 - [ ] `MultiDiGraph`
