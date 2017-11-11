@@ -143,15 +143,15 @@ module Sodium
     
     # Return all edges in graph
     def edges
-      seen = {} of T => Int32
+      seen = Set(T).new
       arr = [] of Tuple(T, T)
       @adj.each do |k, v|
         v.each do |subk, subv|
-          if !seen.has_key?(subk)
+          if !seen.includes? subk
             arr << {k, subk}
           end
         end
-        seen[k] = 1
+        seen.add k
       end
       arr
     end
@@ -222,22 +222,22 @@ module Sodium
 
     # Return number of edges between nodes
     def number_of_edges(list : Enumerable(Tuple(T, T)))
-      list.sum {|e| has_edge?(e[0], e[1]) ? 1 : 0 }
+      list.count { |e| has_edge?(e[0], e[1]) }
     end
 
     # Return nodes with self loop
     def nodes_with_selfloops
-      @adj.keys.map {|k| @adj[k][k]? ? k : nil}.compact
+      @adj.keys.compact_map { |k| @adj[k][k]? ? k : nil }
     end
 
     # Return edges with self loops
     def selfloop_edges
-      @adj.keys.map {|k| @adj[k][k]? ? {k, k} : nil }.compact
+      @adj.keys.compact_map { |k| @adj[k][k]? ? {k, k} : nil }
     end
 
     # Return self-looping edges with data
     def selfloop_edges_with_data
-      @adj.keys.map {|k| @adj[k][k]? ? {k, k, @adj[k][k]} : nil }.compact
+      @adj.keys.compact_map { |k| @adj[k][k]? ? {k, k, @adj[k][k]} : nil }
     end
 
     # Return number of edges with self loops
