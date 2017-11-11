@@ -31,8 +31,8 @@ module Sodium
       end
     end
 
-    # Add nodes from array to graph
-    def add_nodes_from(list : Array(T))
+    # Add nodes from enumerable to graph
+    def add_nodes_from(list : Enumerable(T))
       list.each { |node| add_node(node) }
     end
 
@@ -43,9 +43,9 @@ module Sodium
       @node.delete(n)
     end
 
-    # Remove nodes given in array from graph
-    def remove_nodes_from(list : Array(T))
-      list.each {|node| remove_node(node)}
+    # Remove nodes given in enumerable from graph
+    def remove_nodes_from(list : Enumerable(T))
+      list.each { |node| remove_node(node) }
     end
   
     # Add edge between u and v to graph
@@ -63,13 +63,13 @@ module Sodium
       end
     end
 
-    # Add edges from array to graph
-    def add_edges_from(list : Array(Tuple(T, T)))
+    # Add edges from enumerable to graph
+    def add_edges_from(list : Enumerable(Tuple(T, T)))
       list.each { |e| add_edge(e[0], e[1]) }
     end
 
-    # Add weighted edgres from array of form (u, v, weight) to graph
-    def add_weighted_edges_from(list : Array(Tuple(T, T, Int32)))
+    # Add weighted edgres from enumerable of form (u, v, weight) to graph
+    def add_weighted_edges_from(list : Enumerable(Tuple(T, T, Int32)))
       list.each { |e| add_edge(e[0], e[1], weight: e[2]) }
     end
 
@@ -81,8 +81,8 @@ module Sodium
       end
     end
 
-    # Remove edges given in array from graph
-    def remove_edges_from(list : Array(Tuple(T, T)))
+    # Remove edges given in enumerable from graph
+    def remove_edges_from(list : Enumerable(Tuple(T, T)))
       list.each { |edge| remove_edge(edge[0], edge[1]) }
     end
 
@@ -93,7 +93,7 @@ module Sodium
     end
 
     # Add path of nodes to graph
-    def add_path(nodes : Array(T))
+    def add_path(nodes : Enumerable(T))
       edges = nodes.each_cons(2).map {|c| Tuple(T, T).from(c)}
       add_edges_from(edges.to_a)
     end
@@ -221,7 +221,7 @@ module Sodium
     end
 
     # Return number of edges between nodes
-    def number_of_edges(list : Array(Tuple(T, T)))
+    def number_of_edges(list : Enumerable(Tuple(T, T)))
       list.sum {|e| has_edge?(e[0], e[1]) ? 1 : 0 }
     end
 
