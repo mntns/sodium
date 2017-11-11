@@ -249,5 +249,30 @@ module Sodium
     def copy
       self.dup
     end
+
+    # Compute quotient graph with respect to the given partition
+    #
+    # The partition is given in the form of a Hash map of objects representing
+    # the partition's parts to the vertices included in each part.
+    #
+    # ```
+    # g = Sodium::Graph(Int32).new
+    # g.add_edges_from([{1, 2}, {3, 4}, {5, 6}])
+    # h = g / g.nodes.group_by { |n| n % 3 }
+    # h.edges # => [{1, 2}, {1, 0}, {2, 0}]
+    # ```
+    def /(partition : Hash(T, Enumerable(T)))
+      edges.reduce(self.class.new) do |g, e|
+        source = target = nil
+        partition.each do |repr, vs|
+          source = repr if vs.includes? e[0]
+          target = repr if vs.includes? e[1]
+        end
+        source = e[0] if source.nil?
+        target = e[1] if target.nil?
+        g.add_edge(source, target) unless source == target
+        g
+      end
+    end
   end
 end

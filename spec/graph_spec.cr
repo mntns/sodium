@@ -284,4 +284,25 @@ describe Sodium::Graph do
   describe "#subgraph" do
     # TODO
   end
+
+  describe "#/" do
+    h = Sodium::Graph(Int32).new
+    h.add_nodes_from((1..5))
+    h.add_edges_from([{1,2}, {2,3}, {3,4}, {4,5}, {5,1}, {1,3}, {3,5}])
+    quot = h / { 10 => [1,2], 20 => [3,4] }
+
+    it "returns a Graph with aggregated nodes" do
+      quot.nodes.to_set.should eq(Set{10, 20, 5})
+    end
+
+    it "preserves edges" do
+      quot.has_edge? 10, 20
+      quot.has_edge? 20, 5
+      quot.has_edge? 5, 10
+    end
+
+    it "does not introduce spurious edges" do
+      quot.edges.size.should eq(3)
+    end
+  end
 end
