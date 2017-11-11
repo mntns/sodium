@@ -15,7 +15,7 @@ module Sodium
       # Returns an empty graph
       def empty_graph(n = 0)
         g = Sodium::Graph(T).new()
-        g.add_nodes_from((0..n).to_a)
+        g.add_nodes_from(0..n)
         g
       end
 

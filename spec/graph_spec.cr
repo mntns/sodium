@@ -47,7 +47,7 @@ describe Sodium::Graph do
 
   describe "#remove_nodes_from" do
     it "removes nodes from array" do
-      g.remove_nodes_from((10..13).to_a)
+      g.remove_nodes_from(10..13)
       
       g.nodes.should eq((1..9).to_a)
     end

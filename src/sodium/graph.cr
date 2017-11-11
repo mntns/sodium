@@ -15,7 +15,7 @@ module Sodium
     def attr_to_h(attr)
       # TODO: Fix .to_h in Crystal for NamedTuple
       if !attr.empty?
-        attr.keys.map {|k| {k => attr[k]} of Symbol => Int32}.to_a.reduce {|acc, i| acc.merge(i) }
+        attr.keys.map {|k| {k => attr[k]} of Symbol => Int32}.reduce {|acc, i| acc.merge(i) }
       else
         {} of Symbol => Int32
       end
@@ -95,7 +95,7 @@ module Sodium
     # Add path of nodes to graph
     def add_path(nodes : Enumerable(T))
       edges = nodes.each_cons(2).map {|c| Tuple(T, T).from(c)}
-      add_edges_from(edges.to_a)
+      add_edges_from(edges)
     end
 
     # Add cycle to graph
