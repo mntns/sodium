@@ -13,12 +13,11 @@ module Sodium
     end
 
     def generate_dot(graph)
-      nodes = graph.nodes()
       edges = graph.edges()
       dot = ""
 
       dot += "graph {\n"
-      nodes.each do |k, v|
+      graph.nodes_with_data.each do |k, v|
         dot += "  #{k}[#{gen_attributes(v)}]\n"
       end
 
