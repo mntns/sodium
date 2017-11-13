@@ -150,6 +150,12 @@ describe Sodium::Graph do
                          {22, 26}, {22, 27}, {28, 29}, 
                          {29, 30}, {30, 31}, {31, 32}])
     end
+
+    it "works for different node types" do
+      h = Sodium::Graph(UInt64).new
+      h.add_path([28_u64, 29_u64, 30_u64, 31_u64])
+      h.edges.should eq([{28_u64, 29_u64}, {29_u64, 30_u64}, {30_u64, 31_u64}])
+    end
   end
 
   describe "#get_edge_data" do

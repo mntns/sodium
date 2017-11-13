@@ -143,7 +143,7 @@ module Sodium
     
     # Return all edges in graph
     def edges
-      seen = {} of Int32 | String => Int32
+      seen = {} of T => Int32
       arr = [] of Tuple(T, T)
       @adj.each do |k, v|
         v.each do |subk, subv|
