@@ -15,7 +15,7 @@ module Sodium
     def attr_to_h(attr)
       # TODO: Fix .to_h in Crystal for NamedTuple
       if !attr.empty?
-        attr.keys.map {|k| {k => attr[k]} of Symbol => Int32}.to_a.reduce {|acc, i| acc.merge(i) }
+        attr.keys.map {|k| {k => attr[k]} of Symbol => Int32}.reduce {|acc, i| acc.merge(i) }
       else
         {} of Symbol => Int32
       end
@@ -31,8 +31,8 @@ module Sodium
       end
     end
 
-    # Add nodes from array to graph
-    def add_nodes_from(list : Array(T))
+    # Add nodes from enumerable to graph
+    def add_nodes_from(list : Enumerable(T))
       list.each { |node| add_node(node) }
     end
 
@@ -43,9 +43,9 @@ module Sodium
       @node.delete(n)
     end
 
-    # Remove nodes given in array from graph
-    def remove_nodes_from(list : Array(T))
-      list.each {|node| remove_node(node)}
+    # Remove nodes given in enumerable from graph
+    def remove_nodes_from(list : Enumerable(T))
+      list.each { |node| remove_node(node) }
     end
   
     # Add edge between u and v to graph
@@ -63,13 +63,13 @@ module Sodium
       end
     end
 
-    # Add edges from array to graph
-    def add_edges_from(list : Array(Tuple(T, T)))
+    # Add edges from enumerable to graph
+    def add_edges_from(list : Enumerable(Tuple(T, T)))
       list.each { |e| add_edge(e[0], e[1]) }
     end
 
-    # Add weighted edgres from array of form (u, v, weight) to graph
-    def add_weighted_edges_from(list : Array(Tuple(T, T, Int32)))
+    # Add weighted edgres from enumerable of form (u, v, weight) to graph
+    def add_weighted_edges_from(list : Enumerable(Tuple(T, T, Int32)))
       list.each { |e| add_edge(e[0], e[1], weight: e[2]) }
     end
 
@@ -81,8 +81,8 @@ module Sodium
       end
     end
 
-    # Remove edges given in array from graph
-    def remove_edges_from(list : Array(Tuple(T, T)))
+    # Remove edges given in enumerable from graph
+    def remove_edges_from(list : Enumerable(Tuple(T, T)))
       list.each { |edge| remove_edge(edge[0], edge[1]) }
     end
 
@@ -93,9 +93,9 @@ module Sodium
     end
 
     # Add path of nodes to graph
-    def add_path(nodes : Array(T))
+    def add_path(nodes : Enumerable(T))
       edges = nodes.each_cons(2).map {|c| Tuple(T, T).from(c)}
-      add_edges_from(edges.to_a)
+      add_edges_from(edges)
     end
 
     # Add cycle to graph
@@ -143,15 +143,15 @@ module Sodium
     
     # Return all edges in graph
     def edges
-      seen = {} of Int32 | String => Int32
+      seen = Set(T).new
       arr = [] of Tuple(T, T)
       @adj.each do |k, v|
         v.each do |subk, subv|
-          if !seen.has_key?(subk)
+          if !seen.includes? subk
             arr << {k, subk}
           end
         end
-        seen[k] = 1
+        seen.add k
       end
       arr
     end
@@ -221,23 +221,23 @@ module Sodium
     end
 
     # Return number of edges between nodes
-    def number_of_edges(list : Array(Tuple(T, T)))
-      list.sum {|e| has_edge?(e[0], e[1]) ? 1 : 0 }
+    def number_of_edges(list : Enumerable(Tuple(T, T)))
+      list.count { |e| has_edge?(e[0], e[1]) }
     end
 
     # Return nodes with self loop
     def nodes_with_selfloops
-      @adj.keys.map {|k| @adj[k][k]? ? k : nil}.compact
+      @adj.keys.compact_map { |k| @adj[k][k]? ? k : nil }
     end
 
     # Return edges with self loops
     def selfloop_edges
-      @adj.keys.map {|k| @adj[k][k]? ? {k, k} : nil }.compact
+      @adj.keys.compact_map { |k| @adj[k][k]? ? {k, k} : nil }
     end
 
     # Return self-looping edges with data
     def selfloop_edges_with_data
-      @adj.keys.map {|k| @adj[k][k]? ? {k, k, @adj[k][k]} : nil }.compact
+      @adj.keys.compact_map { |k| @adj[k][k]? ? {k, k, @adj[k][k]} : nil }
     end
 
     # Return number of edges with self loops
@@ -248,6 +248,31 @@ module Sodium
     # Return shallow copy of graph
     def copy
       self.dup
+    end
+
+    # Compute quotient graph with respect to the given partition
+    #
+    # The partition is given in the form of a Hash map of objects representing
+    # the partition's parts to the vertices included in each part.
+    #
+    # ```
+    # g = Sodium::Graph(Int32).new
+    # g.add_edges_from([{1, 2}, {3, 4}, {5, 6}])
+    # h = g / g.nodes.group_by { |n| n % 3 }
+    # h.edges # => [{1, 2}, {1, 0}, {2, 0}]
+    # ```
+    def /(partition : Hash(T, Enumerable(T)))
+      edges.reduce(self.class.new) do |g, e|
+        source = target = nil
+        partition.each do |repr, vs|
+          source = repr if vs.includes? e[0]
+          target = repr if vs.includes? e[1]
+        end
+        source = e[0] if source.nil?
+        target = e[1] if target.nil?
+        g.add_edge(source, target) unless source == target
+        g
+      end
     end
   end
 end

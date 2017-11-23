@@ -47,7 +47,7 @@ describe Sodium::Graph do
 
   describe "#remove_nodes_from" do
     it "removes nodes from array" do
-      g.remove_nodes_from((10..13).to_a)
+      g.remove_nodes_from(10..13)
       
       g.nodes.should eq((1..9).to_a)
     end
@@ -149,6 +149,12 @@ describe Sodium::Graph do
                          {22, 23}, {22, 24}, {22, 25}, 
                          {22, 26}, {22, 27}, {28, 29}, 
                          {29, 30}, {30, 31}, {31, 32}])
+    end
+
+    it "works for different node types" do
+      h = Sodium::Graph(UInt64).new
+      h.add_path([28_u64, 29_u64, 30_u64, 31_u64])
+      h.edges.should eq([{28_u64, 29_u64}, {29_u64, 30_u64}, {30_u64, 31_u64}])
     end
   end
 
@@ -283,5 +289,26 @@ describe Sodium::Graph do
 
   describe "#subgraph" do
     # TODO
+  end
+
+  describe "#/" do
+    h = Sodium::Graph(Int32).new
+    h.add_nodes_from((1..5))
+    h.add_edges_from([{1,2}, {2,3}, {3,4}, {4,5}, {5,1}, {1,3}, {3,5}])
+    quot = h / { 10 => [1,2], 20 => [3,4] }
+
+    it "returns a Graph with aggregated nodes" do
+      quot.nodes.to_set.should eq(Set{10, 20, 5})
+    end
+
+    it "preserves edges" do
+      quot.has_edge? 10, 20
+      quot.has_edge? 20, 5
+      quot.has_edge? 5, 10
+    end
+
+    it "does not introduce spurious edges" do
+      quot.edges.size.should eq(3)
+    end
   end
 end
