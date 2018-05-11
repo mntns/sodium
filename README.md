@@ -59,6 +59,11 @@ For more information, please check out the [documentation](https://monoton.space
 - [ ] `MultiGraph`
 - [ ] `MultiDiGraph`
 
+### Graph Algorithms
+- [ ] `DFS`
+- [ ] `BFS`
+- [ ] `Djikstra`
+
 ## Contributing
 
 1. [Fork it](https://github.com/EddyShure/sodium/fork)
