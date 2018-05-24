@@ -1,6 +1,9 @@
+require "./algorithms/traversal/dfs.cr"
+
 module Sodium
   class Graph(T)
     include Iterator(T)
+    # include Sodium::Algorithms::Traversal::DFS(T)
 
     # Initialize empty graph
     def initialize
