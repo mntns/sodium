@@ -3,7 +3,7 @@ require "./algorithms/traversal/dfs.cr"
 module Sodium
   class Graph(T)
     include Iterator(T)
-    # include Sodium::Algorithms::Traversal::DFS(T)
+    include Sodium::Algorithms::Traversal::DFS(T)
 
     # Initialize empty graph
     def initialize
@@ -171,7 +171,7 @@ module Sodium
 
     # Return neighbours of node
     def neighbours(node)
-      @adj.fetch(node, {} of Symbol => Int32).keys()
+      adj_hash = @adj.fetch(node, {} of Int32 => Int32).keys()
     end
 
     # Get node from graph

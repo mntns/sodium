@@ -55,9 +55,7 @@ For more information, please check out the [documentation](https://monoton.space
 
 ### Graph types
 - [x] `Graph`
-- [ ] `DiGraph`
-- [ ] `MultiGraph`
-- [ ] `MultiDiGraph`
+- [x] `DiGraph`
 
 ### Graph Algorithms
 - [ ] `DFS`

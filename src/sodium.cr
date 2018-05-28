@@ -5,6 +5,5 @@ require "./sodium/drawing/*"
 require "./sodium/generator/*"
 
 module Sodium
- extend Sodium::Function
-   extend Sodium::Drawing::Dot
+ extend Sodium::Drawing::Dot
 end

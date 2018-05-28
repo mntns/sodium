@@ -19,5 +19,10 @@ module Sodium
     def remove_edge(u : T, v : T)
       @adj[u].delete(v)
     end
+    
+    # Return number of edges
+    def size
+      @adj.keys.map {|k| @adj[k].keys.size() }.sum()
+    end
   end
 end
